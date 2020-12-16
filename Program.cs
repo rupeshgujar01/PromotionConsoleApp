@@ -4,15 +4,16 @@ namespace PromotionConsoleApp
 {
     public class Program
     {
+        
         static void Main(string[] args)
         {
-            int QtyA, QtyB, QtyC, QtyD;
-            GetCart(out QtyA, out QtyB, out QtyC, out QtyD);
+            GetCart();
         }
 
-        public static void GetCart(out int QtyA, out int QtyB, out int QtyC, out int QtyD)
+        public static void GetCart()
         {
             int UnitPriceA = 50, UnitPriceB = 30, UnitPriceC = 20, UnitPriceD = 15;
+            int QtyA, QtyB, QtyC, QtyD;
 
             Console.WriteLine("How many units of A : ");
             QtyA = Convert.ToInt32(Console.ReadLine());
@@ -31,26 +32,68 @@ namespace PromotionConsoleApp
 
         public static int CalculateTotal(int qtyA, int qtyB, int qtyC, int qtyD)
         {
+            Promotions promotion = new Promotion3ofA();
+            int ATotal = promotion.CalculatePromotion(qtyA);
+
+            promotion = new Promotion2ofB();
+            int BTotal = promotion.CalculatePromotion(qtyB);
+
+            promotion = new PromotionCD();
+            promotion.d = qtyD;
+            int CDTotal = promotion.CalculatePromotion(qtyC);
+
+            int Total = ATotal + BTotal + CDTotal;
+            return Total;
+        }
+    }
+
+    public class Promotions
+    {
+        public int d = 0;
+        public virtual int CalculatePromotion(int qty)
+        {
+            int total = 0;
+            return total;
+        }
+    }
+
+    public class Promotion3ofA : Promotions
+    {
+        public override int CalculatePromotion(int qtyA)
+        {
             int promtotionalQtyA = qtyA / 3;
             int normalQtyA = qtyA % 3;
 
             int ATotal = (promtotionalQtyA * 130) + (normalQtyA * 50);
+            return ATotal;
+        }
+    }
 
-
+    public class Promotion2ofB : Promotions
+    {
+        public override int CalculatePromotion(int qtyB)
+        {
             int promtotionalQtyB = qtyB / 2;
             int normalQtyB = qtyB % 2;
 
             int BTotal = (promtotionalQtyB * 45) + (normalQtyB * 30);
+            return BTotal;
+        }
+    }
 
-            int promtotionalQtyCD=0, normalQtyCD=0, CDTotal=0;
-            if (qtyC > 0 && qtyD > 0)
+    public class PromotionCD : Promotions
+    {
+        public override int CalculatePromotion(int qtyC)
+        {
+            int promtotionalQtyCD = 0, normalQtyCD = 0, CDTotal = 0;
+            if (qtyC > 0 && d > 0)
             {
-                promtotionalQtyCD = (qtyC + qtyD) / 2;
-                normalQtyCD = (qtyC + qtyD) % 2;
+                promtotionalQtyCD = (qtyC + d) / 2;
+                normalQtyCD = (qtyC + d) % 2;
 
-                if (qtyC != qtyD)
+                if (qtyC != d)
                 {
-                    normalQtyCD = qtyC > qtyD ? 20 : 15;
+                    normalQtyCD = qtyC > d ? 20 : 15;
                 }
                 CDTotal = (promtotionalQtyCD * 30) + (normalQtyCD);
             }
@@ -58,13 +101,12 @@ namespace PromotionConsoleApp
             {
                 CDTotal = qtyC * 20;
             }
-            else if (qtyD > 0)
+            else if (d > 0)
             {
-                CDTotal = qtyD * 15;
+                CDTotal = d * 15;
             }
 
-            int Total = ATotal + BTotal + CDTotal;
-            return Total;            
+            return CDTotal;
         }
     }
 }
